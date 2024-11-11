@@ -309,8 +309,6 @@ runs:
          command -v python
 
          echo "::endgroup::"
-
-         exit 1
          
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
