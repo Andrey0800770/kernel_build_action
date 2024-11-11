@@ -304,6 +304,7 @@ runs:
          fi
          echo "::group:: Python VERSION"
 
+         $SU update-alternatives --install /usr/bin/python python /usr/bin/python2 1
          python --version
          command -v python
 
