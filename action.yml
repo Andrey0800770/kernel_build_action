@@ -313,8 +313,8 @@ runs:
          GCC64="$HOME/gcc-64/bin"
          echo "$GCC64"
          
-         COMMAND0="make O=out ARCH=arm64 star2qlte_chn_open_defconfig"
-         COMMAND="PATH=$GCC64:$PATH make -j$(nproc --all) CROSS_COMPILE=aarch64-linux-android- O=out ARCH=arm64
+         COMMAND0="make O=out ARCH=arm64 ${{ inputs.config }}"
+         COMMAND="PATH=$GCC64:$PATH make -j$(nproc --all) CROSS_COMPILE=aarch64-linux-android- O=out ARCH=arm64"
          export PLATFORM_VERSION=10.0
          
          echo "using command: ${COMMAND}"
