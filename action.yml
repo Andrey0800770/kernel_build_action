@@ -306,20 +306,17 @@ runs:
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
          
-         
          mkdir -p -v $HOME/gcc-64
          git clone https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git $HOME/gcc-64
          
          GCC64="$HOME/gcc-64/bin"
          echo "$GCC64"
-         
-         COMMAND0="make O=out ARCH=arm64 ${{ inputs.config }}"
-         COMMAND="PATH=$GCC64:$PATH make -j$(nproc --all) CROSS_COMPILE=aarch64-linux-android- O=out ARCH=arm64"
          export PLATFORM_VERSION=10.0
-         
-         echo "using command: ${COMMAND}"
-         ${COMMAND0}
-         ${COMMAND}
+
+         make O=out ARCH=arm64 ${{ inputs.config }}"
+         echo "Starting compilaton"
+         PATH="$GCC64:$PATH" make -j$(nproc --all) CROSS_COMPILE=aarch64-linux-android- O=out ARCH=arm64
+
          echo "::endgroup::"
 
          unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
