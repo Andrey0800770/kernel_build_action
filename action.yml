@@ -302,7 +302,13 @@ runs:
              fi
              echo "::endgroup::"
          fi
+         echo "::group:: Python VERSION"
 
+         python --version
+         command -v python
+
+         echo "::endgroup::"
+         
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
          
