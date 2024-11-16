@@ -42,6 +42,10 @@ inputs:
     description: 'Android version.'
     required: true
     default: 12
+  path:
+    description: 'Set environment PATH'
+    required: true
+    default: false
   ksu:
     description: 'KernelSU function support'
     required: false
@@ -322,8 +326,7 @@ runs:
 
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
-         PATH="$GCC64:$PATH" make -j$(nproc --all) CROSS_COMPILE=aarch64-linux-android- O=out ARCH=arm64
-
+         PATH=${{ inputs.path }}
          echo "::endgroup::"
 
          unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
