@@ -46,6 +46,10 @@ inputs:
     description: 'Set environment PATH'
     required: true
     default: false
+  make-options:
+    description: 'Make Options'
+    required: true
+    default: false
   ksu:
     description: 'KernelSU function support'
     required: false
@@ -326,7 +330,7 @@ runs:
 
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
-         PATH=${{ inputs.path }}
+         PATH=${{ inputs.path }} ${{ inputs.make-options }}
          echo "::endgroup::"
 
          unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
