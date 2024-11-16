@@ -50,6 +50,10 @@ inputs:
     description: 'Make Options'
     required: true
     default: false
+  python:
+    description: 'Set Python Version'
+    required: true
+    default: python3
   ksu:
     description: 'KernelSU function support'
     required: false
@@ -97,10 +101,6 @@ inputs:
     description: 'Enable Ccache for compiling kernel'
     required: false
     default: false
-  aosp-gcc:
-    description: 'Use gcc from aosp project.'
-    required: true
-    default: true
   aosp-clang:
     description: 'Use clang from aosp project.'
     required: false
@@ -141,10 +141,6 @@ inputs:
   access-token:
     description: 'PAT with repository scope (https://github.com/settings/tokens)'
     required: false
-  extra-cmd:
-    description: 'Extra options of building kernel.'
-    required: false
-    default: ""
 
 runs:
   using: 'composite'
@@ -312,7 +308,7 @@ runs:
          fi
          echo "::group:: Python VERSION"
 
-         $SU update-alternatives --install /usr/bin/python python /usr/bin/python2 1
+         $SU update-alternatives --install /usr/bin/python python /usr/bin/${{ inputs.python }} 1
          python --version
          command -v python
 
