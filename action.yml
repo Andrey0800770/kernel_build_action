@@ -54,6 +54,14 @@ inputs:
     description: 'Set Python Version'
     required: true
     default: python3
+  gcc64-url:
+    description: 'GCC64 Repo'
+    required: true
+    default: false
+  clang-url:
+    description: 'Clang Repo'
+    required: false
+    default: 
   ksu:
     description: 'KernelSU function support'
     required: false
@@ -318,10 +326,17 @@ runs:
          mkdir out -p -v
          
          mkdir -p -v $HOME/gcc-64
-         git clone https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git $HOME/gcc-64
-         
+         git clone ${{ inputs.gcc64-url }} $HOME/gcc-64
          GCC64="$HOME/gcc-64/bin"
          echo "$GCC64"
+
+         if [ -n "${{ inputs.clang-url }}" ]; then
+             mkdir -p -v "$HOME/clang"
+             git clone ${{ inputs.clang-url }} $HOME/clang
+             CLANG="$HOME/clang/bin"
+             echo "$CLANG"
+         fi
+
          export PLATFORM_VERSION=10.0
 
          make O=out ARCH=arm64 ${{ inputs.config }}
