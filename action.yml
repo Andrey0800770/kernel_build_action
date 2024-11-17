@@ -56,8 +56,12 @@ inputs:
     default: python3
   gcc64-url:
     description: 'GCC64 Repo'
-    required: true
-    default: false
+    required: false
+    default: 
+  gcc64-tar:
+    description: 'GCC64 tar URL'
+    required: false
+    default: 
   clang-url:
     description: 'Clang Repo'
     required: false
@@ -329,10 +333,20 @@ runs:
          echo "::group:: Building Kernel with selected cross compiler"
          mkdir out -p -v
          
-         mkdir -p -v $HOME/gcc-64
-         git clone ${{ inputs.gcc64-url }} $HOME/gcc-64
-         GCC64="$HOME/gcc-64/bin"
-         echo "$GCC64"
+         if [ -n "${{ inputs.gcc64-url }}" ]; then
+             mkdir -p -v "$HOME/gcc64"
+             git clone ${{ inputs.gcc64-url }} $HOME/clang
+             GCC64="$HOME/gcc64/bin"
+             echo "$GCC64"
+         fi
+
+         if [ -n "${{ inputs.gcc64-tar }}" ]; then
+             mkdir -p -v "$HOME/gcc64"
+             wget -O gcc64.tar ${{ inputs.gcc64-tar }}
+             tar -xzf gcc64.tar -C $HOME/gcc64
+             GCC64="$HOME/gcc64/bin"
+             echo "$GCC64"
+         fi
 
          if [ -n "${{ inputs.clang-url }}" ]; then
              mkdir -p -v "$HOME/clang"
