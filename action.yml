@@ -342,10 +342,15 @@ runs:
 
          if [ -n "${{ inputs.gcc64-tar }}" ]; then
              mkdir -p -v "$HOME/gcc64"
-             wget -O gcc64.tar ${{ inputs.gcc64-tar }}
-             tar -xzf gcc64.tar -C $HOME/gcc64
-             GCC64="$HOME/gcc64/bin"
-             echo "$GCC64"
+             wget -O gcc64.tar "${{ inputs.gcc64-tar }}"
+             case "$(file -b --mime-type gcc64.tar)" in
+                 application/x-gzip) tar -xzf gcc64.tar -C "$HOME/gcc64" ;;   # .tar.gz
+                 application/x-xz)   tar -xJf gcc64.tar -C "$HOME/gcc64" ;;   # .tar.xz
+                 application/zip)    unzip gcc64.tar -d "$HOME/gcc64" ;;       # .zip
+                 application/x-tar)  tar -xf gcc64.tar -C "$HOME/gcc64" ;;     # .tar
+                 *) echo "Tipo de arquivo não suportado: $(file -b --mime-type gcc64.tar)"; exit 1 ;;
+             esac
+             echo "$HOME/gcc64/bin"
          fi
 
          if [ -n "${{ inputs.clang-url }}" ]; then
