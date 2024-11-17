@@ -62,6 +62,10 @@ inputs:
     description: 'Clang Repo'
     required: false
     default: 
+  clang-tar:
+    description: 'Clang tar URL'
+    required: false
+    default: 
   ksu:
     description: 'KernelSU function support'
     required: false
@@ -333,6 +337,13 @@ runs:
          if [ -n "${{ inputs.clang-url }}" ]; then
              mkdir -p -v "$HOME/clang"
              git clone ${{ inputs.clang-url }} $HOME/clang
+             CLANG="$HOME/clang/bin"
+             echo "$CLANG"
+         fi
+         if [ -n "${{ inputs.clang-tar }}" ]; then
+             mkdir -p -v "$HOME/clang"
+             wget -O clang.tar ${{ inputs.clang-tar }}
+             tar -xzf clang.tar -C $HOME/clang
              CLANG="$HOME/clang/bin"
              echo "$CLANG"
          fi
