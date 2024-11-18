@@ -335,7 +335,7 @@ runs:
          
          if [ -n "${{ inputs.gcc64-url }}" ]; then
              mkdir -p -v "$HOME/gcc64"
-             git clone ${{ inputs.gcc64-url }} $HOME/clang
+             git clone ${{ inputs.gcc64-url }} $HOME/gcc64
              GCC64="$HOME/gcc64/bin"
              echo "$GCC64"
          fi
