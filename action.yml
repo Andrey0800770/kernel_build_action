@@ -240,7 +240,7 @@ runs:
                 else
                     echo "Kernel version: $VERSION.$PATCHLEVEL.$SUBLEVEL"
  
-                    curl -LSs "https://raw.githubusercontent.com/Andrey0800770/KernelSU/main/kernel/setup.sh" | bash -s {{ inputs.ksu-version }}
+                    curl -LSs "https://raw.githubusercontent.com/Andrey0800770/KernelSU/main/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
                 fi
           fi
             
