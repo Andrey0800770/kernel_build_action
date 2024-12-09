@@ -234,7 +234,7 @@ runs:
          
           if [ ${{ inputs.ksu }} = true ]; then
             echo "::group:: Initializing KernelSU"
-            
+            rm -rf KernelSU
                 if [ ${{ inputs.ksu-other }} = true ]; then
                     curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
                 else
