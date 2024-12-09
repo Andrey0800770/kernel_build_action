@@ -245,7 +245,7 @@ runs:
           fi
             
             echo "::endgroup::"
-         fi
+         
 
          if [ -f scripts/dtc/libfdt/mkdtboimg.py ]; then
             if grep python2 scripts/Makefile.lib >/dev/null; then
