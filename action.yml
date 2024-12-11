@@ -346,6 +346,7 @@ runs:
              tar -xzf clang.tar -C $HOME/clang
              CLANG="$HOME/clang/bin"
              echo "$CLANG"
+             ls "$HOME/clang"
          fi
 
          export PLATFORM_VERSION=10.0
