@@ -323,7 +323,7 @@ runs:
 
          if [ -n "${{ inputs.gcc64-tar }}" ]; then
              mkdir -p -v "$HOME/gcc64"
-             wget -O gcc64.tar "${{ inputs.gcc64-tar }}"
+             wget -q -O gcc64.tar "${{ inputs.gcc64-tar }}"
              case "$(file -b --mime-type gcc64.tar)" in
                  application/x-gzip) tar -xzf gcc64.tar -C "$HOME/gcc64" ;;   # .tar.gz
                  application/x-xz)   tar -xJf gcc64.tar -C "$HOME/gcc64" ;;   # .tar.xz
@@ -342,7 +342,7 @@ runs:
          fi
          if [ -n "${{ inputs.clang-tar }}" ]; then
              mkdir -p -v "$HOME/clang"
-             wget -O clang.tar ${{ inputs.clang-tar }}
+             wget -q -O clang.tar ${{ inputs.clang-tar }}
              tar -xzf clang.tar -C $HOME/clang
              CLANG="$HOME/clang/bin"
              echo "$CLANG"
