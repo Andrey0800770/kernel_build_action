@@ -364,7 +364,7 @@ runs:
          fi
          
          PATH="${{ inputs.path }}"
-         "${{ inputs.cflags }} ${CROSS_COMPILE}gcc --version"
+         ${{ inputs.cflags }} ${CROSS_COMPILE}gcc --version
          echo "::endgroup::"
          
          echo "::group:: Compiling Linux Kernel "
