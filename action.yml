@@ -344,11 +344,12 @@ runs:
              CLANG="$HOME/clang/bin"
              echo "$CLANG"
          fi
+         
          if [ -n "${{ inputs.clang-tar }}" ]; then
              mkdir -p -v "$HOME/clang"
              wget -q -O clang.tar ${{ inputs.clang-tar }}
              case "$(file -b --mime-type clang.tar)" in
-                 application/x-gzip) tar -xzf clang.tar -C "$HOME/clang" ;;   # .tar.gz
+                 application/x-gzip | application/gzip) tar -xzf clang.tar -C "$HOME/clang" ;;   # .tar.gz
                  application/x-xz)   tar -xJf clang.tar -C "$HOME/clang" ;;   # .tar.xz
                  application/zip)    unzip clang.tar -d "$HOME/clang" ;;       # .zip
                  application/x-tar)  tar -xf clang.tar -C "$HOME/clang" ;;     # .tar
