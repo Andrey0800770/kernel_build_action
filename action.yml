@@ -315,14 +315,14 @@ runs:
 
          echo "::endgroup::"
          
-         echo "::group:: Building Kernel with selected cross compiler"
-         mkdir out -p -v
+         echo "::group:: Setting-up Toolchains"
          
          if [ -n "${{ inputs.gcc64-url }}" ]; then
              mkdir -p -v "$HOME/gcc64"
              git clone ${{ inputs.gcc64-url }} $HOME/gcc64
              GCC64="$HOME/gcc64/bin"
              echo "$GCC64"
+             ls "$HOME/gcc"
          fi
 
          if [ -n "${{ inputs.gcc64-tar }}" ]; then
@@ -335,7 +335,9 @@ runs:
                  application/x-tar)  tar -xf gcc64.tar -C "$HOME/gcc64" ;;     # .tar
                  *) echo "Tipo de arquivo não suportado: $(file -b --mime-type gcc64.tar)"; exit 1 ;;
              esac
-             echo "$HOME/gcc64/bin"
+             GCC64="$HOME/gcc64/bin"
+             echo "$GCC64"
+             ls "$HOME/gcc"
          fi
 
          if [ -n "${{ inputs.clang-url }}" ]; then
@@ -343,6 +345,7 @@ runs:
              git clone ${{ inputs.clang-url }} $HOME/clang
              CLANG="$HOME/clang/bin"
              echo "$CLANG"
+             ls "$HOME/clang"
          fi
          
          if [ -n "${{ inputs.clang-tar }}" ]; then
@@ -360,8 +363,17 @@ runs:
              ls "$HOME/clang"
          fi
 
+         gcc -v
+         ld -v
+
+         echo "::endgroup::"
+         
+         echo "::group:: Compiling Linux Kernel "
+
+         mkdir out -p -v
+         
          export PLATFORM_VERSION=10.0
-         export EXTRAVERSION="${{ inputs.extra-version }}"
+         export EXTRAVERSION=${{ inputs.extra-version }}
          
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
