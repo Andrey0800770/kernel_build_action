@@ -367,6 +367,7 @@ runs:
          ${{ inputs.cflags }} 
          ${CROSS_COMPILE}gcc --version || true
          ${CROSS_COMPILE}clang --version || true
+         ${CLANG_TRIPLE}clang --version || true
          echo "::endgroup::"
          
          echo "::group:: Compiling Linux Kernel "
