@@ -362,7 +362,8 @@ runs:
              echo "$CLANG"
              ls "$HOME/clang"
          fi
-
+         
+         PATH="${{ inputs.path }}"
          gcc -v
          ld -v
 
@@ -377,7 +378,7 @@ runs:
          
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
-         PATH="${{ inputs.path }}" ${{ inputs.make-options }}
+         ${{ inputs.make-options }}
          echo "::endgroup::"
 
          unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
