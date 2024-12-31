@@ -50,6 +50,10 @@ inputs:
     description: 'Make Options'
     required: true
     default: false
+  extra-version:
+    description: 'Kernel Extra Version'
+    required: false
+    default:
   python:
     description: 'Set Python Version'
     required: true
@@ -350,7 +354,8 @@ runs:
          fi
 
          export PLATFORM_VERSION=10.0
-
+         export EXTRAVERSION="${{ extra-version.path }}"
+         
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
          PATH="${{ inputs.path }}" ${{ inputs.make-options }}
