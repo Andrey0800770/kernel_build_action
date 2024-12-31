@@ -354,7 +354,7 @@ runs:
          fi
 
          export PLATFORM_VERSION=10.0
-         export EXTRAVERSION="${{ extra-version.path }}"
+         export EXTRAVERSION="${{ inputs.extra-version }}"
          
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
