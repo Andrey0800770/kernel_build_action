@@ -366,8 +366,7 @@ runs:
          export PATH="${{ inputs.path }}"
          ${{ inputs.cflags }} 
          ${CROSS_COMPILE}gcc --version || true
-         ${CROSS_COMPILE}clang --version || true
-         ${CLANG_TRIPLE}clang --version || true
+         clang --version || true
          echo "::endgroup::"
          
          echo "::group:: Compiling Linux Kernel "
