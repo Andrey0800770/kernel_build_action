@@ -364,9 +364,9 @@ runs:
          fi
          
          PATH="${{ inputs.path }}"
-         gcc -v
-         ld -v
-
+         ${CROSS_COMPILE}gcc -v
+         ${CLANG_TRIPLE}gcc -v
+         ${CROSS_COMPILE}ld -v
          echo "::endgroup::"
          
          echo "::group:: Compiling Linux Kernel "
