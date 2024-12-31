@@ -322,7 +322,7 @@ runs:
              git clone ${{ inputs.gcc64-url }} $HOME/gcc64
              GCC64="$HOME/gcc64/bin"
              echo "$GCC64"
-             ls "$HOME/gcc"
+             ls "$HOME/gcc64"
          fi
 
          if [ -n "${{ inputs.gcc64-tar }}" ]; then
@@ -337,7 +337,7 @@ runs:
              esac
              GCC64="$HOME/gcc64/bin"
              echo "$GCC64"
-             ls "$HOME/gcc"
+             ls "$HOME/gcc64"
          fi
 
          if [ -n "${{ inputs.clang-url }}" ]; then
