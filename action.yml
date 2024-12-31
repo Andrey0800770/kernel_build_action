@@ -46,7 +46,7 @@ inputs:
     description: 'Set environment PATH'
     required: true
     default: false
-  make-options:
+  cflags:
     description: 'Make Options'
     required: true
     default: false
@@ -364,7 +364,7 @@ runs:
          fi
          
          PATH="${{ inputs.path }}"
-         "${CROSS_COMPILE}gcc --version"
+         "${{ inputs.cflags }} ${CROSS_COMPILE}gcc --version"
          echo "::endgroup::"
          
          echo "::group:: Compiling Linux Kernel "
@@ -376,7 +376,7 @@ runs:
          
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
-         ${{ inputs.make-options }}
+         make -j$(nproc --all) ${{ inputs.cflags }} O=out ARCH=arm64
          echo "::endgroup::"
 
          unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
