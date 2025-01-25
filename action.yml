@@ -374,7 +374,7 @@ runs:
          mkdir out -p -v
          
          export PLATFORM_VERSION=10.0
-         export EXTRAVERSION=${{ inputs.extra-version }}
+         sed -i 's/^EXTRAVERSION =$/EXTRAVERSION = '"${{ inputs.extra-version }}"'/' Makefile
          
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
