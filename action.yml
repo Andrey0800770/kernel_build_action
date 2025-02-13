@@ -221,14 +221,10 @@ runs:
 
          if lsb_release -a 2>/dev/null | grep -q "Ubuntu 24.04"; then
           echo "Installing Python 2.7 "
-          wget http://archive.ubuntu.com/ubuntu/pool/universe/p/python2.7/python2.7-minimal_2.7.18-1~20.04_amd64.deb
-          wget http://archive.ubuntu.com/ubuntu/pool/universe/p/python2.7/python2.7_2.7.18-1~20.04_amd64.deb
-          wget http://archive.ubuntu.com/ubuntu/pool/universe/p/python-defaults/python2-minimal_2.7.17-2ubuntu4_amd64.deb
-          wget http://archive.ubuntu.com/ubuntu/pool/universe/p/python-defaults/python2_2.7.17-2ubuntu4_amd64.deb
-          "$SU" dpkg -i python2.7-minimal_2.7.18-1~20.04_amd64.deb \
-                      python2.7_2.7.18-1~20.04_amd64.deb \
-                      python2-minimal_2.7.17-2ubuntu4_amd64.deb \
-                      python2_2.7.17-2ubuntu4_amd64.deb
+          wget http://archive.ubuntu.com/ubuntu/pool/universe/p/python-defaults/python2-minimal_2.7.18-3_amd64.deb
+          wget http://archive.ubuntu.com/ubuntu/pool/universe/p/python-defaults/python2_2.7.18-3_amd64.deb
+
+          "$SU" dpkg -i python2-minimal_2.7.18-3_amd64.deb python2_2.7.18-3_amd64.deb
          fi
 
          $SU update-alternatives --install /usr/bin/python python /usr/bin/${{ inputs.python }} 1
