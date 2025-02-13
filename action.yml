@@ -195,7 +195,12 @@ runs:
 
          echo "::group:: Installing Building Depend Packages"
          "$SU" apt-get update
-         "$SU" apt-get install --no-install-recommends -y git-core gnupg flex bison build-essential zip curl zlib1g-dev libc6-dev-i386 libc6-dev libncurses5 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig python2
+         "$SU" apt-get install --no-install-recommends -y git-core gnupg flex bison build-essential zip curl zlib1g-dev libc6-dev-i386 libc6-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig
+         if [ "$(lsb_release -rs)" == "24.04" ]; then
+           "$SU" apt-get install --no-install-recommends -y libncurses6 libncurses-dev libncursesw6
+         else
+           "$SU" apt-get install --no-install-recommends -y libncurses5 lib32ncurses5-dev python2
+         fi
          aria2c -q https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh && NONINTERACTIVE=1 bash ./uninstall.sh -f -q
          echo "::endgroup::"
          export SWAP_FILE=$(swapon --show=NAME | tail -n 1)
@@ -211,7 +216,46 @@ runs:
          fi
 
          echo "::endgroup::"
-         
+
+         echo "::group:: Python VERSION"
+
+         if lsb_release -a 2>/dev/null | grep -q "Ubuntu 24.04"; then
+          echo "Iniciando a instalação do Python 2.7 no Ubuntu 24.04..."
+
+          $SU apt install -y build-essential libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libgdbm-dev liblzma-dev git
+
+          wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
+
+          tar -xvf Python-2.7.18.tgz
+          cd Python-2.7.18
+
+          ./configure --enable-optimizations
+          make
+          sudo make altinstall
+
+          if command -v python2.7 &>/dev/null; then
+              echo "Python 2.7 instalado com sucesso!"
+              python2.7 --version
+          else
+              echo "Falha na instalação do Python 2.7."
+              exit 1
+          fi
+
+          cd ..
+          rm -rf Python-2.7.18 Python-2.7.18.tgz
+
+          echo "Instalação concluída."
+          else
+          echo "Este script é compatível apenas com Ubuntu 24.04."
+          exit 1
+         fi
+
+         $SU update-alternatives --install /usr/bin/python python /usr/bin/${{ inputs.python }} 1
+         python --version
+         command -v python
+
+         echo "::endgroup::"
+
          echo "::group:: Pulling Kernel Source"
          git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
          echo "::endgroup::"
@@ -307,51 +351,7 @@ runs:
              fi
              echo "::endgroup::"
          fi
-         echo "::group:: Python VERSION"
 
-    # Verifica se o sistema é Ubuntu 24.04
-    if lsb_release -a 2>/dev/null | grep -q "Ubuntu 24.04"; then
-    echo "Iniciando a instalação do Python 2.7 no Ubuntu 24.04..."
-
-    # Instala dependências necessárias
-    sudo apt install -y build-essential libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libgdbm-dev liblzma-dev python-openssl git
-
-    # Baixa o código-fonte do Python 2.7
-    wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
-
-    # Extrai o arquivo
-    tar -xvf Python-2.7.18.tgz
-    cd Python-2.7.18
-
-    # Compila e instala o Python 2.7
-    ./configure --enable-optimizations
-    make
-    sudo make altinstall
-
-    # Verifica a instalação
-    if command -v python2.7 &>/dev/null; then
-        echo "Python 2.7 instalado com sucesso!"
-        python2.7 --version
-    else
-        echo "Falha na instalação do Python 2.7."
-        exit 1
-    fi
-
-    # Limpa os arquivos baixados
-    cd ..
-    rm -rf Python-2.7.18 Python-2.7.18.tgz
-
-    echo "Instalação concluída."
-    else
-    echo "Este script é compatível apenas com Ubuntu 24.04."
-    exit 1
-    fi
-         $SU update-alternatives --install /usr/bin/python python /usr/bin/${{ inputs.python }} 1
-         python --version
-         command -v python
-
-         echo "::endgroup::"
-         
          echo "::group:: Setting-up Toolchains"
          
          if [ -n "${{ inputs.gcc64-url }}" ]; then
