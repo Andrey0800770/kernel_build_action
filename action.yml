@@ -220,34 +220,11 @@ runs:
          echo "::group:: Python VERSION"
 
          if lsb_release -a 2>/dev/null | grep -q "Ubuntu 24.04"; then
-          echo "Iniciando a instalação do Python 2.7 no Ubuntu 24.04..."
+          echo "Installing Python 2.7 "
 
-          $SU apt install -y build-essential libssl-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libgdbm-dev liblzma-dev git
-
-          wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
-
-          tar -xvf Python-2.7.18.tgz
-          cd Python-2.7.18
-
-          ./configure --enable-optimizations
-          make
-          sudo make altinstall
-
-          if command -v python2.7 &>/dev/null; then
-              echo "Python 2.7 instalado com sucesso!"
-              python2.7 --version
-          else
-              echo "Falha na instalação do Python 2.7."
-              exit 1
-          fi
-
-          cd ..
-          rm -rf Python-2.7.18 Python-2.7.18.tgz
-
-          echo "Instalação concluída."
-          else
-          echo "Este script é compatível apenas com Ubuntu 24.04."
-          exit 1
+          "$SU" add-apt-repository ppa:deadsnakes/ppa
+          "$SU" apt update
+          "$SU" apt-get install --no-install-recommends -y
          fi
 
          $SU update-alternatives --install /usr/bin/python python /usr/bin/${{ inputs.python }} 1
