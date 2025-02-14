@@ -221,8 +221,10 @@ runs:
 
          if lsb_release -a 2>/dev/null | grep -q "Ubuntu 24.04"; then
           echo "Installing Python 2.7 "
-          deb http://azure.archive.ubuntu.com/ubuntu/ jammy universe
-          deb http://azure.archive.ubuntu.com/ubuntu/ jammy-updates universe
+          "$SU" echo "deb http://azure.archive.ubuntu.com/ubuntu/ jammy universe" | sudo tee -a /etc/apt/sources.list
+          "$SU" echo "deb http://azure.archive.ubuntu.com/ubuntu/ jammy-updates universe" | sudo tee -a /etc/apt/sources.list
+
+
           "$SU" apt update
           "$SU" apt-get install --no-install-recommends -y python2
          fi
