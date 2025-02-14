@@ -157,6 +157,7 @@ runs:
          else
            cd ${{ inputs.kernel-dir }}
            git fetch
+           git checkout "${{ inputs.kernel-branch }}"
            git pull
          fi
          echo "::endgroup::"
