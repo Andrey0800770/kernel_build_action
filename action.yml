@@ -152,8 +152,8 @@ runs:
 
          echo "::group:: Pulling Kernel Source"
          if [ -n "${{ inputs.kernel-url }}" ]; then
-           git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
-           cd ${{ inputs.kernel-dir }}
+           git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=1 kernel/${{ inputs.kernel-dir }}
+           cd kernel/${{ inputs.kernel-dir }}
          else
            cd ${{ inputs.kernel-dir }}
            git fetch
