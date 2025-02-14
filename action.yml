@@ -8,40 +8,18 @@ branding:
 inputs:
   kernel-url:
     description: 'Kernel Source Url'
-    required: true
-  depth:
-    required: false
-    default: 1
-  vendor:
-    required: false
-    default: false
-  vendor-url:
-    description: 'Kernel Vendor Source Url'
     required: false
   kernel-dir:
     required: false
     default: kernel
-  vendor-dir:
-    required: false
-    default: vendor
   kernel-branch:
     description: 'Branch name'
-    required: false
-    default: main
-  vendor-branch:
     required: false
     default: main
   config:
     description: 'configuration for building android kernel'
     required: true
     default: defconfig
-  arch:
-    required: true
-    default: arm64
-  android-version:
-    description: 'Android version.'
-    required: true
-    default: 12
   path:
     description: 'Set environment PATH'
     required: true
@@ -61,97 +39,29 @@ inputs:
   gcc64-url:
     description: 'GCC64 Repo'
     required: false
-    default: 
+    default:
   gcc64-tar:
     description: 'GCC64 tar URL'
     required: false
-    default: 
+    default:
   clang-url:
     description: 'Clang Repo'
     required: false
-    default: 
+    default:
   clang-tar:
     description: 'Clang tar URL'
     required: false
-    default: 
-  ksu:
-    description: 'KernelSU function support'
-    required: false
-    default: false
-  ksu-version:
-    description: 'KernelSU default branch'
-    required: false
-    default: "main"
-  ksu-other:
-    required: false
-    default: false
-  ksu-url:
-    description: "Use 3rd KernelSU"
-    required: false
-    default: ""
-  ksu-lkm:
-    description: "Build KernelSU as a loadable kernel module"
-    required: false
-    default: false
-  disable-lto:
-    description: 'Disable LTO configs for configs.'
-    required: false
-    default: false
-  lxc:
-    description: 'Enable lxc and docker configs for configs.'
-    required: false
-    default: false
-  lxc-patch:
-    description: 'Apply lxc patch aviod not booting'
-    required: false
-    default: false
-  nethunter:
-    description: 'Enable Kali nethunter'
-    required: false
-    default: false
-  nethunter-patch:
-    description: 'patch config'
-    required: false
-    default: false
-  kvm:
-    description: 'Enable KVM for configs.'
-    required: false
-    default: false
+    default:
   ccache:
     description: 'Enable Ccache for compiling kernel'
     required: false
     default: false
-  aosp-clang:
-    description: 'Use clang from aosp project.'
-    required: false
-    default: false
-  aosp-clang-version:
-    required: false
-    default: "r383902"
-  other-clang-url:
-    required: false
-    default: ''
-  other-clang-branch:
-    required: false
-    default: main
-  android-ndk:
-    description: 'Use Android NDK to build kernrl (Experimental features)'
-    required: false
-    default: false
-  android-ndk-version:
-    description: 'Please press nember instead of r(e.g. : 26).'
-    required: false
-    default: r21b
   anykernel3:
     description: 'Package kernel use anykernel3.'
     required: false
     default: false
   anykernel3-url:
     description: '3rdparty anykernrl3 url path'
-    required: false
-    default: ""
-  bootimg-url:
-    description: "boot.img path"
     required: false
     default: ""
   release:
@@ -236,103 +146,13 @@ runs:
          echo "::endgroup::"
 
          echo "::group:: Pulling Kernel Source"
+        if [ -n "${{ inputs.kernel-url }}" ]; then
          git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
          echo "::endgroup::"
-
-         if [ "${{ inputs.vendor }}" = true ]; then
-             echo "::group:: Pulling Kernel vendor source"
-             git clone ${{ inputs.vendor-url }} --depth=${{ inputs.depth }} kernel/${{ inputs.vendor-dir }} -b ${{ inputs.vendor-branch }}
-             test -d kernel/${{ inputs.vendor-dir }}/vendor && cp -rv kernel/${{ inputs.vendor-dir }}/vendor kernel
-             test -d kernel/${{ inputs.vendor-dir }}/vendor && cp -rv kernel/${{ inputs.vendor-dir }}/vendor ./
-             echo "::endgroup::"
-         fi
-
-         cd kernel/${{ inputs.kernel-dir }}
-         function version_gt() { test "$(echo -e "$1\n$2" | sort -V | tail -n1)" == "$1"; }
-         VERSION=$(grep -E '^VERSION = ' Makefile | awk '{print $3}')
-         PATCHLEVEL=$(grep -E '^PATCHLEVEL = ' Makefile | awk '{print $3}')
-         SUBLEVEL=$(grep -E '^SUBLEVEL = ' Makefile | awk '{print $3}')
-         if [ "$VERSION" -lt 5 ]; then
-             touch nongki.txt
-         elif [ "PATCHLEVEL" -lt 10 ]; then
-             touch nongki.txt
-         fi
-
-         
-          if [ ${{ inputs.ksu }} = true ]; then
-            echo "::group:: Initializing KernelSU"
-            rm -rf KernelSU
-                if [ ${{ inputs.ksu-other }} = true ]; then
-                    curl -SsL "${{ inputs.ksu-url }}/raw/${{ inputs.ksu-version }}/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
-                else
-                    echo "Kernel version: $VERSION.$PATCHLEVEL.$SUBLEVEL"
- 
-                    curl -LSs "https://raw.githubusercontent.com/Andrey0800770/KernelSU/main/kernel/setup.sh" | bash -s ${{ inputs.ksu-version }}
-                fi
-          fi
-            
-            echo "::endgroup::"
-         
-
-         if [ -f scripts/dtc/libfdt/mkdtboimg.py ]; then
-            if grep python2 scripts/Makefile.lib >/dev/null; then
-                echo "::group:: Uning mkdtboimg Python3 version instead of Python2 version"
-                rm -rf -v scripts/dtc/libfdt/mkdtboimg.py && aria2c https://github.com/dabao1955/kernel_build_action/raw/main/mkdtboimg.py -o scripts/dtc/libfdt/mkdtboimg.py
-            elif grep scripts/ufdt && test ! -d scripts/ufdt >/dev/null; then
-                aria2c https://github.com/dabao1955/kernel_build_action/raw/main/mkdtboimg.py -o ufdt/libufdt/utils/src/mkdtboimg.py
-            fi
-            test -f /usr/bin/python2 || "$SU" ln -s -f -v /usr/bin/python3 /usr/bin/python2
-         fi
-         echo "::endgroup::"
-
-         if [ ${{ inputs.nethunter }} = true ]; then
-             echo "::group:: Initializing Kali nethunter"
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/config.sh -o nconfig.sh &&  bash nconfig.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
-             if [ ${{ inputs.nethunter-patch }} = true ]; then
-                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection.patch && git apply add-wifi-injection.patch
-                 aria2c apply https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/fix-ath9k-naming-conflict.patch && git apply fix-ath9k-naming-confict.patch
-                 if [ "$SUBLEVEL" -lt "19" ]; then
-                     aria2c https://github.com/dabao1955/kernel_build_action/raw/main/nethunter/add-wifi-injection-4.14.patch && git apply add-wifi-injection-4.14.patch
-                 fi
-             else
-                  echo "skip patch"
-             fi
-             echo "::endgroup::"
-         fi
-
-         if [ ${{ inputs.disable-lto }} = true ]; then
-             if grep -q "LTO" "arch/${{ inputs.arch }}/configs/${{ inputs.config }}"
-             then
-                  sed -i 's/CONFIG_LTO=y/CONFIG_LTO=n/' arch/${{ inputs.arch }}/configs/${{ inputs.config }} 
-                  sed -i 's/CONFIG_LTO_CLANG=y/CONFIG_LTO_CLANG=n/' arch/${{ inputs.arch }}/configs/${{ inputs.config }} 
-                  sed -i 's/CONFIG_THINLTO=y/CONFIG_THINLTO=n/' arch/${{ inputs.arch }}/configs/${{ inputs.config }} 
-                  echo "CONFIG_LTO_NONE=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-             fi
-         fi
-
-         if [ ${{ inputs.kvm }} = true ]; then
-            echo "CONFIG_VIRTUALIZATION=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            echo "CONFIG_KVM=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            echo "CONFIG_KVM_MMIO=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-            echo "CONFIG_KVM_ARM_HOST=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
-         fi
-
-         if [ ${{ inputs.lxc }} = true ]; then
-             echo "::group:: Enabling LXC"
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/config.sh && bash config.sh arch/${{ inputs.arch }}/configs/${{ inputs.config }} -w
-             if [ ${{ inputs.lxc-patch }} = true ]; then
-                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/xt_qtaguid.patch
-                 aria2c https://github.com/dabao1955/kernel_build_action/raw/main/lxc/cgroup.patch
-                 patch kernel/cgroup/cgroup.c < cgroup.patch
-                 patch net/netfilter/xt_qtaguid.c < xt_qtaguid.patch
-             else
-                 echo skip lxc patching
-             fi
-             echo "::endgroup::"
-         fi
-
+        fi
+         cd ${{ inputs.kernel-dir }}
          echo "::group:: Setting-up Toolchains"
-         
+
          if [ -n "${{ inputs.gcc64-url }}" ]; then
              mkdir -p -v "$HOME/gcc64"
              git clone ${{ inputs.gcc64-url }} $HOME/gcc64
@@ -363,7 +183,7 @@ runs:
              echo "$CLANG"
              ls "$HOME/clang"
          fi
-         
+
          if [ -n "${{ inputs.clang-tar }}" ]; then
              mkdir -p -v "$HOME/clang"
              wget -q -O clang.tar ${{ inputs.clang-tar }}
@@ -378,20 +198,20 @@ runs:
              echo "$CLANG"
              ls "$HOME/clang"
          fi
-         
+
          export PATH="${{ inputs.path }}"
-         ${{ inputs.cflags }} 
+         ${{ inputs.cflags }}
          ${CROSS_COMPILE}gcc --version || true
          clang --version || true
          echo "::endgroup::"
-         
+
          echo "::group:: Compiling Linux Kernel "
 
          mkdir out -p -v
-         
+
          export PLATFORM_VERSION=10.0
          sed -i 's/^EXTRAVERSION =$/EXTRAVERSION = '"${{ inputs.extra-version }}"'/' Makefile
-         
+
          make O=out ARCH=arm64 ${{ inputs.config }}
          echo "Starting compilaton"
          make -j$(nproc --all) ${{ inputs.cflags }} O=out ARCH=arm64
