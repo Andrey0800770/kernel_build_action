@@ -208,7 +208,8 @@ runs:
              echo "$CLANG"
              ls "$HOME/clang"
          fi
-
+         ls "$HOME/clang"
+         ls "$HOME/clang/bin"
          export PATH="${{ inputs.path }}"
          ${{ inputs.cflags }}
          ${CROSS_COMPILE}gcc --version || true
