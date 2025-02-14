@@ -9,6 +9,7 @@ inputs:
   kernel-url:
     description: 'Kernel Source Url'
     required: false
+    default:
   kernel-dir:
     required: false
     default: kernel
@@ -20,6 +21,10 @@ inputs:
     description: 'configuration for building android kernel'
     required: true
     default: defconfig
+  arch:
+    description: 'device arch'
+    required: true
+    default: arm64
   path:
     description: 'Set environment PATH'
     required: true
@@ -146,11 +151,16 @@ runs:
          echo "::endgroup::"
 
          echo "::group:: Pulling Kernel Source"
-        if [ -n "${{ inputs.kernel-url }}" ]; then
-         git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
+         if [ -n "${{ inputs.kernel-url }}" ]; then
+           git clone --recursive ${{ inputs.kernel-url }} -b "${{ inputs.kernel-branch }}" --depth=${{ inputs.depth }} kernel/${{ inputs.kernel-dir }}
+           cd ${{ inputs.kernel-dir }}
+         else
+           cd ${{ inputs.kernel-dir }}
+           git fetch
+           git pull
+         fi
          echo "::endgroup::"
-        fi
-         cd ${{ inputs.kernel-dir }}
+
          echo "::group:: Setting-up Toolchains"
 
          if [ -n "${{ inputs.gcc64-url }}" ]; then
