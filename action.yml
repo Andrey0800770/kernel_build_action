@@ -80,6 +80,9 @@ inputs:
   access-token:
     description: 'PAT with repository scope (https://github.com/settings/tokens)'
     required: false
+  llvm-clang:
+    description: 'install llvm-clang'
+    require: false
 
 runs:
   using: 'composite'
@@ -209,13 +212,21 @@ runs:
              esac
              echo "$CLANG"
          fi
+
+         if [ -n "${{ inputs.llvm-clang }}" ]; then
+          dpkg -l | grep clang | awk '{print $2}' | xargs sudo apt-get remove -y
+          sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          clang --version
+         fi
+
          ls "$HOME/clang" || true
          ls "$HOME/clang/bin" || true
 
          if [ -n "${{ inputs.llvm }}" ]; then
          wget -q https://github.com/Andrey0800770/kernel_build_action/raw/refs/heads/main/binutils.tar -O file.tar
          mkdir -p -v "$HOME/binutils"
-         tar -xvf file.tar -C "$HOME/binutils"
+         tar -xf file.tar -C "$HOME/binutils"
          rm file.tar
          BINUTILS="$HOME/binutils/bin"
          fi
