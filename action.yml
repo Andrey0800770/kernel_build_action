@@ -57,6 +57,10 @@ inputs:
     description: 'Clang tar URL'
     required: false
     default:
+  llvm:
+    description: 'Use llvm bins'
+    required: false
+    default:
   ccache:
     description: 'Enable Ccache for compiling kernel'
     required: false
@@ -215,6 +219,12 @@ runs:
          ${{ inputs.cflags }}
          ${CROSS_COMPILE}gcc --version || true
          clang --version || true
+
+         if [ -n "${{ inputs.llvm }}" ]; then
+         sudo rm /usr/bin/as
+         sudo ln -s /home/runner/clang/bin/llvm-as /usr/bin/as
+         fi
+
          echo "::endgroup::"
 
          echo "::group:: Compiling Linux Kernel "
