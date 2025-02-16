@@ -217,11 +217,11 @@ runs:
          ls "$HOME/clang/bin"
 
          if [ -n "${{ inputs.llvm }}" ]; then
-         wget -q https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250212-release/Clang-21.0.0git-20250212.tar.gz -O file.tar
-         mkdir -p -v "$HOME/files"
-         tar -xzf file.tar -C "$HOME/files"
+         wget -q https://github.com/Andrey0800770/kernel_build_action/raw/refs/heads/main/binutils.tar -O file.tar
+         mkdir -p -v "$HOME/binutils"
+         tar -xvf file.tar -C "$HOME/binutils"
          rm file.tar
-         BINUTILS="$HOME/files/bin"
+         BINUTILS="$HOME/binutils/bin"
          fi
 
          export PATH="${{ inputs.path }}"
