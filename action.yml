@@ -194,9 +194,7 @@ runs:
          if [ -n "${{ inputs.clang-url }}" ]; then
              mkdir -p -v "$HOME/clang"
              git clone ${{ inputs.clang-url }} $HOME/clang
-             CLANG="$HOME/clang/bin"
              echo "$CLANG"
-             ls "$HOME/clang"
          fi
 
          if [ -n "${{ inputs.clang-tar }}" ]; then
@@ -209,12 +207,10 @@ runs:
                  application/x-tar)  tar -xf clang.tar -C "$HOME/clang" ;;     # .tar
                  *) echo "Tipo de arquivo não suportado: $(file -b --mime-type clang.tar)"; exit 1 ;;
              esac
-             CLANG="$HOME/clang/bin"
              echo "$CLANG"
-             ls "$HOME/clang"
          fi
-         ls "$HOME/clang"
-         ls "$HOME/clang/bin"
+         ls "$HOME/clang" || true
+         ls "$HOME/clang/bin" || true
 
          if [ -n "${{ inputs.llvm }}" ]; then
          wget -q https://github.com/Andrey0800770/kernel_build_action/raw/refs/heads/main/binutils.tar -O file.tar
