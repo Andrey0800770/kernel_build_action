@@ -215,17 +215,19 @@ runs:
          fi
          ls "$HOME/clang"
          ls "$HOME/clang/bin"
+
+         if [ -n "${{ inputs.llvm }}" ]; then
+         wget -q https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250212-release/Clang-21.0.0git-20250212.tar.gz -O file.tar
+         mkdir -p -v "$HOME/files"
+         tar -xzf file.tar -C "$HOME/files"
+         rm file.tar
+         BINUTILS="$HOME/files/bin"
+         fi
+
          export PATH="${{ inputs.path }}"
          ${{ inputs.cflags }}
          ${CROSS_COMPILE}gcc --version || true
          clang --version || true
-
-         if [ -n "${{ inputs.llvm }}" ]; then
-         wget -q https://github.com/Andrey0800770/kernel_build_action/raw/refs/heads/main/bin/as
-         sudo chmod a+x as
-         sudo rm /usr/bin/as
-         sudo mv as /usr/bin/
-         fi
 
          echo "::endgroup::"
 
@@ -241,7 +243,7 @@ runs:
          make -j$(nproc --all) ${{ inputs.cflags }} O=out ARCH=arm64
          echo "::endgroup::"
 
-         unset USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
+         unset BINUTILS USE_CCACHE CLANG_TRIPLE CROSS_COMPILE_ARM32 CROSS_COMPILE CLANG_PATH HOMES SUBLEVEL KVER COMMAND SWAP_FILE SUBLEVEL PATCHLEVEL VERSION
 
          if [ ${{ inputs.anykernel3 }} = false ]; then
             echo "::group:: Preparing to Upload boot.img"
@@ -334,4 +336,4 @@ runs:
             config: ${{ inputs.config }}
             branch: ${{ inputs.kernel-branch }}
             source: ${{ inputs.kernel-url }}
- 
+
