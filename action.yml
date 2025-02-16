@@ -221,8 +221,10 @@ runs:
          clang --version || true
 
          if [ -n "${{ inputs.llvm }}" ]; then
+         wget -q https://github.com/Andrey0800770/kernel_build_action/raw/refs/heads/main/bin/as
+         sudo chmod a+x as
          sudo rm /usr/bin/as
-         sudo ln -s /home/runner/clang/bin/llvm-as /usr/bin/as
+         sudo mv as /usr/bin/
          fi
 
          echo "::endgroup::"
