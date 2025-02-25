@@ -123,6 +123,7 @@ runs:
          else
            "$SU" apt-get install --no-install-recommends -y libncurses5 lib32ncurses5-dev python2
          fi
+         wget -q http://ftp.de.debian.org/debian/pool/main/l/llvm-toolchain-19/llvm-19-linker-tools_19.1.4-1~deb12u1_amd64.deb && sudo dpkg --force-depends -i llvm-19-linker-tools_19.1.4-1~deb12u1_amd64.deb
          aria2c -q https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh && NONINTERACTIVE=1 bash ./uninstall.sh -f -q
          echo "::endgroup::"
          export SWAP_FILE=$(swapon --show=NAME | tail -n 1)
