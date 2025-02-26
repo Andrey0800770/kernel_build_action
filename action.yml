@@ -226,6 +226,7 @@ runs:
          ls "$HOME/clang" || true
          ls "$HOME/clang/bin" || true
 
+         export LD_LIBRARY_PATH=/usr/lib/llvm-19/lib:$LD_LIBRARY_PATH
          if [ -n "${{ inputs.llvm }}" ]; then
          wget -q https://github.com/Andrey0800770/kernel_build_action/raw/refs/heads/main/binutils.tar -O file.tar
          mkdir -p -v "$HOME/binutils"
