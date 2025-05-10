@@ -165,9 +165,10 @@ runs:
            cd kernel/${{ inputs.kernel-dir }}
          else
            cd kernel/${{ inputs.kernel-dir }}
-           git fetch
+           echo "Fetching remote branch ${{ inputs.kernel-branch }}"
+           git fetch origin "${{ inputs.kernel-branch }}" --depth=1
            git checkout "${{ inputs.kernel-branch }}"
-           git pull
+           git pull --depth=1
          fi
          echo "::endgroup::"
 
